@@ -1,0 +1,46 @@
+@using Sitecore.ExperienceForms.Mvc.Html
+@model Sitecore.ExperienceForms.Mvc.Models.Fields.StringInputViewModel
+
+@{
+    var id = Html.IdFor(m => Model.Value);
+    var button = Html.IdFor(m => Model.Value) + "_input";
+}
+<div id="formWrapper">
+    <label for="@Html.IdFor(m => Model.Value)" class="@Model.LabelCssClassSettings.CssClass">@Html.DisplayTextFor(t => Model.Title)</label>
+    <input type="text" id='@(@id+"_0")' name='@(@id+"_0")' class="@Model.CssClassSettings.CssClass">
+    <input id="@Html.IdFor(m => Model.Value)" name="@Html.NameFor(m => Model.Value)" class="@Model.CssClassSettings.CssClass" type="hidden" value="" @if (Model.MaxLength > 0) { <text> maxlength="@Model.MaxLength" </text> } placeholder="@Model.PlaceholderText" data-sc-tracking="@Model.IsTrackingEnabled" data-sc-field-name="@Model.Name" data-sc-field-key="@Model.ConditionSettings.FieldKey" @Html.GenerateUnobtrusiveValidationAttributes(m => m.Value) />
+
+    @Html.ValidationMessageFor(m => Model.Value)
+
+    <input type="button" id="@button" class="input-add" value="Add New" />
+</div>
+
+<script>
+    var count = 1;
+    var addAfterInputId = '@id';
+    var inputValue = "";
+
+    jQuery(document).ready(function ($) {
+        jQuery("#@button").click(function () {
+
+            var newInput = '@id' + '_' + count;
+            var input = jQuery('<br /><input type="text" id=' + newInput + ' name=' + newInput + ' class="@Model.CssClassSettings.CssClass">');
+
+            jQuery("#" + addAfterInputId).after(input);
+
+            addAfterInputId = '@id' + '_' + count;
+            count++;
+        })
+
+        jQuery("form").submit(function () {
+            jQuery("#formWrapper :text").each(function () {
+                if (jQuery.trim($(this).val())) {
+                    inputValue += $(this).val() + "|";
+                }
+            });
+
+            jQuery("#" + "@id").val(inputValue);
+        });
+    });
+
+</script>
